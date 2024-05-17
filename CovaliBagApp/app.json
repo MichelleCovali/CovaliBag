@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "CovaliBagApp",
-    "slug": "CovaliBagApp",
+    "name": "Test",
+    "slug": "Test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
