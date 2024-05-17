@@ -9,7 +9,12 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="BlackScreen" headerMode="none">
+      <Stack.Navigator
+        initialRouteName="BlackScreen"
+        screenOptions={{
+          headerShown: false  
+        }}
+      >
         <Stack.Screen name="BlackScreen" component={BlackScreen} />
         <Stack.Screen name="Menu" component={Menu} />
       </Stack.Navigator>
