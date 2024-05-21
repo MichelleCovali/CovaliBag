@@ -8,6 +8,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 const baseWidth = 375; // Base screen width, e.g., iPhone X
@@ -65,21 +66,48 @@ const Menu = () => {
             Bags
           </Text>
         </View>
-        <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
-          <Image source={require("./assets/bag.png")} style={styles.bagImage} />
-          <View style={styles.infoRow}>
-            <View style={styles.footer}>
-              <Text style={styles.limitedEdition}>limited edition</Text>
-              <Text style={styles.modelName}>Model Covali</Text>
-            </View>
-            <View style={styles.warningRow}>
+        <SafeAreaView style={styles.scrollContaine}>
+          <ScrollView
+            horizontal
+          >
+            <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
               <Image
-                source={require("./assets/warning-icon.png")}
-                style={styles.warningIcon}
+                source={require("./assets/bag.png")}
+                style={styles.bagImage}
               />
+              <View style={styles.infoRow}>
+                <View style={styles.footer}>
+                  <Text style={styles.limitedEdition}>limited edition</Text>
+                  <Text style={styles.modelName}>Model Covali</Text>
+                </View>
+                <View style={styles.warningRow}>
+                  <Image
+                    source={require("./assets/warning-icon.png")}
+                    style={styles.warningIcon}
+                  />
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+            <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
+              <Image
+                source={require("./assets/bag.png")}
+                style={styles.bagImage}
+              />
+              <View style={styles.infoRow}>
+                <View style={styles.footer}>
+                  <Text style={styles.limitedEdition}>limited edition</Text>
+                  <Text style={styles.modelName}>Model Covali</Text>
+                </View>
+                <View style={styles.warningRow}>
+                  <Image
+                    source={require("./assets/warning-icon.png")}
+                    style={styles.warningIcon}
+                  />
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
         <View style={styles.plusRow}>
           <Image
             source={
@@ -113,6 +141,11 @@ const ToggleModeButton = ({ isDarkMode, onPress }) => {
 const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
+  },
+  scrollContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     marginTop: responsiveHeight(60),
@@ -165,6 +198,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   bagBoxLight: {
+    width,
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
@@ -173,6 +207,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   bagBoxDark: {
+    width,
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
