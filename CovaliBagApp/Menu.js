@@ -9,10 +9,17 @@ import {
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import FlipCard from "react-native-flip-card";
 
 const { width, height } = Dimensions.get("window");
 const baseWidth = 375; // Base screen width, e.g., iPhone X
 const baseHeight = 667; // Base screen height
+
+const bags = [
+  { id: 0, name: "Bag 1", imageUrl: "./assets/bag.png" },
+  { id: 1, name: "Bag 2", imageUrl: "./assets/bag.png" },
+  { id: 2, name: "Bag 3", imageUrl: "./assets/bag.png" },
+];
 
 function responsiveWidth(num) {
   return (width * num) / baseWidth;
@@ -70,6 +77,14 @@ const Menu = () => {
           <ScrollView
             horizontal
           >
+          {bags.map((bag) => (  
+            <FlipCard
+            flipHorizontal={true}
+            flipVertical={false}
+            friction={6}
+            key={bag.id}
+            >
+            {/* Front of card */} 
             <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
               <Image
                 source={require("./assets/bag.png")}
@@ -88,24 +103,13 @@ const Menu = () => {
                 </View>
               </View>
             </View>
-            <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
-              <Image
-                source={require("./assets/bag.png")}
-                style={styles.bagImage}
-              />
-              <View style={styles.infoRow}>
-                <View style={styles.footer}>
+            {/* back of card */}
+            <View style={[isDarkMode ? styles.backPageDark : styles.backPageLight]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>Model Covali</Text>
-                </View>
-                <View style={styles.warningRow}>
-                  <Image
-                    source={require("./assets/warning-icon.png")}
-                    style={styles.warningIcon}
-                  />
-                </View>
-              </View>
             </View>
+            </FlipCard>
+          ))}
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
@@ -265,6 +269,27 @@ const styles = StyleSheet.create({
   },
   darkMode: {
     backgroundColor: "#393939",
+  },
+
+  backPageLight: {
+    width: responsiveWidth(370),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+  },
+  backPageDark: {
+    width: responsiveWidth(370),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#E4BF7C",
+    borderRadius: 20,
   },
 });
 
