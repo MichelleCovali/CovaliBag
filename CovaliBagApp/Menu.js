@@ -93,7 +93,7 @@ const Menu = () => {
               <View style={styles.infoRow}>
                 <View style={styles.footer}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
-                  <Text style={styles.modelName}>Model Covali</Text>
+                  <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
                 <View style={styles.warningRow}>
                   <Image
@@ -106,7 +106,7 @@ const Menu = () => {
             {/* back of card */}
             <View style={[isDarkMode ? styles.backPageDark : styles.backPageLight]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
-                  <Text style={styles.modelName}>Model Covali</Text>
+                  <Text style={styles.modelName}>{bag.name}</Text>
             </View>
             </FlipCard>
           ))}
@@ -202,7 +202,8 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   bagBoxLight: {
-    width,
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
@@ -211,7 +212,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   bagBoxDark: {
-    width,
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
   },
 
   backPageLight: {
-    width: responsiveWidth(370),
+    width: responsiveWidth(310),
     height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
@@ -282,7 +284,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   backPageDark: {
-    width: responsiveWidth(370),
+    width: responsiveWidth(310),
     height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
