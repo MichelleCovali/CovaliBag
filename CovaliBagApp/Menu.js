@@ -36,16 +36,24 @@ function responsiveFontSize(fontSize) {
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  const getCurrentColorThemeBackground = () => {
+    return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
+  };
+
+  const getCurrentColorThemeTextMain = () => {
+    return isDarkMode ? styles.textDarkMain : styles.textLightMain;
+  };
+  const getCurrentColorThemeBagBox = () => {
+    return isDarkMode ? styles.cardDark : styles.cardLight;
+  };
+
   const toggleMode = () => {
     setIsDarkMode(!isDarkMode);
   };
 
   return (
     <ScrollView
-      style={[
-        styles.scrollViewStyle,
-        isDarkMode ? styles.darkMode : styles.lightMode,
-      ]}
+      style={[styles.scrollViewStyle, getCurrentColorThemeBackground()]}
     >
       <View style={[styles.container]}>
         <View style={styles.header}>
@@ -63,13 +71,17 @@ const Menu = () => {
         </View>
         <View style={styles.text}>
           <Text
-            style={[isDarkMode ? styles.darkMode : styles.lightMode, styles]}
+            // What is that ?
+            style={[
+              isDarkMode
+                ? styles.darkModeBackground
+                : styles.lightModeBackground,
+              styles,
+            ]}
           >
             select
           </Text>
-          <Text
-            style={[isDarkMode ? styles.titleBagsDark : styles.titleBagsLight]}
-          >
+          <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
             Bags
           </Text>
         </View>
@@ -83,9 +95,7 @@ const Menu = () => {
                 key={bag.id}
               >
                 {/* Front of card */}
-                <View
-                  style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}
-                >
+                <View style={[getCurrentColorThemeBagBox(), styles.bagBox]}>
                   <Image source={bag.imageUrl} style={styles.bagImage} />
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
@@ -101,11 +111,7 @@ const Menu = () => {
                   </View>
                 </View>
                 {/* back of card */}
-                <View
-                  style={[
-                    isDarkMode ? styles.backPageDark : styles.backPageLight,
-                  ]}
-                >
+                <View style={[styles.backPage, getCurrentColorThemeBagBox()]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -202,15 +208,40 @@ const styles = StyleSheet.create({
     color: "#E4BF7C",
     fontSize: responsiveFontSize(24),
   },
-  titleBagsDark: {
-    fontSize: responsiveFontSize(32),
-    fontWeight: "bold",
+  textDarkMain: {
     color: "#E4BF7C",
   },
-  titleBagsLight: {
+  textLightMain: {
+    color: "#000000",
+  },
+  titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
-    color: "#000000",
+  },
+  // titleBagsDark: {
+  //   fontSize: responsiveFontSize(32),
+  //   fontWeight: "bold",
+  //   color: "#E4BF7C",
+  // },
+  // titleBagsLight: {
+  //   fontSize: responsiveFontSize(32),
+  //   fontWeight: "bold",
+  //   color: "#000000",
+  // },
+  cardLight: {
+    backgroundColor: "white",
+  },
+  cardDark: {
+    backgroundColor: "#E4BF7C",
+  },
+  bagBox: {
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
   },
   bagBoxLight: {
     width: responsiveWidth(310),
@@ -229,7 +260,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#E4BF7C",
     borderRadius: 20,
   },
   bagImage: {
@@ -277,13 +307,22 @@ const styles = StyleSheet.create({
     width: responsiveWidth(60),
     height: responsiveHeight(50),
   },
-  lightMode: {
+
+  lightModeBackground: {
     backgroundColor: "#E4BF7C",
   },
-  darkMode: {
+  darkModeBackground: {
     backgroundColor: "#393939",
   },
-
+  backPage: {
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
   backPageLight: {
     width: responsiveWidth(310),
     height: responsiveHeight(410),
