@@ -16,9 +16,9 @@ const baseWidth = 375; // Base screen width, e.g., iPhone X
 const baseHeight = 667; // Base screen height
 
 const bags = [
-  { id: 0, name: "Bag 1", imageUrl: "./assets/bag.png" },
-  { id: 1, name: "Bag 2", imageUrl: "./assets/bag.png" },
-  { id: 2, name: "Bag 3", imageUrl: "./assets/bag.png" },
+  { id: 0, name: "Bag 1", imageUrl: require("./assets/bag.png") },
+  { id: 1, name: "Bag 2", imageUrl: require("./assets/bag.png") },
+  { id: 2, name: "Bag 3", imageUrl: require("./assets/bag2.jpg") },
 ];
 
 function responsiveWidth(num) {
@@ -50,16 +50,16 @@ const Menu = () => {
       <View style={[styles.container]}>
         <View style={styles.header}>
           <ToggleModeButton isDarkMode={isDarkMode} onPress={toggleMode} />
-        </View>
-        <View style={styles.logoBox}>
-          <Image
-            source={
-              isDarkMode
-                ? require("./assets/Logo1.png")
-                : require("./assets/main.png")
-            }
-            style={styles.logo}
-          />
+          <View style={styles.logoBox}>
+            <Image
+              source={
+                isDarkMode
+                  ? require("./assets/Logo1.png")
+                  : require("./assets/main.png")
+              }
+              style={styles.logo}
+            />
+          </View>
         </View>
         <View style={styles.text}>
           <Text
@@ -74,42 +74,43 @@ const Menu = () => {
           </Text>
         </View>
         <SafeAreaView style={styles.scrollContaine}>
-          <ScrollView
-            horizontal
-          >
-          {bags.map((bag) => (  
-            <FlipCard
-            flipHorizontal={true}
-            flipVertical={false}
-            friction={6}
-            key={bag.id}
-            >
-            {/* Front of card */} 
-            <View style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}>
-              <Image
-                source={require("./assets/bag.png")}
-                style={styles.bagImage}
-              />
-              <View style={styles.infoRow}>
-                <View style={styles.footer}>
+          <ScrollView horizontal>
+            {bags.map((bag) => (
+              <FlipCard
+                flipHorizontal={true}
+                flipVertical={false}
+                friction={6}
+                key={bag.id}
+              >
+                {/* Front of card */}
+                <View
+                  style={[isDarkMode ? styles.bagBoxDark : styles.bagBoxLight]}
+                >
+                  <Image source={bag.imageUrl} style={styles.bagImage} />
+                  <View style={styles.infoRow}>
+                    <View style={styles.footer}>
+                      <Text style={styles.limitedEdition}>limited edition</Text>
+                      <Text style={styles.modelName}>{bag.name}</Text>
+                    </View>
+                    <View style={styles.warningRow}>
+                      <Image
+                        source={require("./assets/warning-icon.png")}
+                        style={styles.warningIcon}
+                      />
+                    </View>
+                  </View>
+                </View>
+                {/* back of card */}
+                <View
+                  style={[
+                    isDarkMode ? styles.backPageDark : styles.backPageLight,
+                  ]}
+                >
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
-                <View style={styles.warningRow}>
-                  <Image
-                    source={require("./assets/warning-icon.png")}
-                    style={styles.warningIcon}
-                  />
-                </View>
-              </View>
-            </View>
-            {/* back of card */}
-            <View style={[isDarkMode ? styles.backPageDark : styles.backPageLight]}>
-                  <Text style={styles.limitedEdition}>limited edition</Text>
-                  <Text style={styles.modelName}>{bag.name}</Text>
-            </View>
-            </FlipCard>
-          ))}
+              </FlipCard>
+            ))}
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
@@ -146,18 +147,26 @@ const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
   },
+
   scrollContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   header: {
-    marginTop: responsiveHeight(60),
+    marginTop: responsiveHeight(20),
     width: "100%",
     flexDirection: "row",
-    marginLeft: responsiveWidth(20),
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: responsiveWidth(10),
+    position: "relative",
   },
   toggleButton: {
+    position: "absolute",
+    left: 10,
+    top: 10,
+    zIndex: 2,
     padding: responsiveWidth(20),
     borderRadius: responsiveWidth(20),
     backgroundColor: "transparent",
@@ -167,8 +176,10 @@ const styles = StyleSheet.create({
     height: responsiveHeight(24),
   },
   logoBox: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    alignSelf: "center",
     justifyContent: "center",
   },
   logo: {
