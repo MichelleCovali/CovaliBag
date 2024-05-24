@@ -1,11 +1,12 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import BlackScreen from './BlackScreen';
-import Menu from './Menu';
-import mihaelapp from './mihaelapp';
-import darylapp from './darylap';
-import rogerapp from './rogerapp';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import BlackScreen from "./BlackScreen";
+import Menu from "./Menu";
+import mihaelapp from "./mihaelapp";
+import darylapp from "./darylap";
+import rogerapp from "./rogerapp";
+import Menu2 from "./Menu2";
 
 const Stack = createStackNavigator();
 
@@ -15,12 +16,13 @@ const App = () => {
       <Stack.Navigator
         initialRouteName="BlackScreen"
         screenOptions={{
-          headerShown: false  
+          headerShown: false,
         }}
       >
-        {/* <Stack.Screen name="BlackScreen" component={BlackScreen} />
-        <Stack.Screen name="Menu" component={Menu} /> */}
-        <Stack.Screen name="mihaelapp" component={mihaelapp} />
+        <Stack.Screen name="BlackScreen" component={BlackScreen} />
+        {/* <Stack.Screen name="Menu" component={Menu} /> */}
+        <Stack.Screen name="Menu2" component={Menu2} />
+        {/* <Stack.Screen name="mihaelapp" component={mihaelapp} /> */}
         {/* <Stack.Screen name="darylapp" component={darylapp} /> */}
         {/* <Stack.Screen name="rogerapp" component={rogerapp} /> */}
       </Stack.Navigator>
