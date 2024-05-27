@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions,} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Modal, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -27,6 +27,7 @@ function responsiveFontSize(fontSize) {
 
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const getCurrentColorThemeBackground = () => {
     return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
@@ -42,6 +43,10 @@ const Menu = () => {
 
   const toggleMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
   };
 
   return (
@@ -110,15 +115,36 @@ const Menu = () => {
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
-          <Image
-            source={
-              isDarkMode
-                ? require("./assets/plusIconDark.png")
-                : require("./assets/plusIconLight.png")
-            }
-            style={styles.plusIcon}
-          />
+          <TouchableOpacity onPress={toggleMenu}>
+            <Image
+              source={
+                isDarkMode
+                  ? require("./assets/plusIconDark.png")
+                  : require("./assets/plusIconLight.png")
+              }
+              style={styles.plusIcon}
+            />
+          </TouchableOpacity>
         </View>
+        {isMenuVisible && (
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isMenuVisible}
+            onRequestClose={toggleMenu}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.menuContainer}>
+                <Text style={styles.menuItem}>Option 1</Text>
+                <Text style={styles.menuItem}>Option 2</Text>
+                <Text style={styles.menuItem}>Option 3</Text>
+                <TouchableOpacity onPress={toggleMenu}>
+                  <Text style={styles.closeButton}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        )}
       </View>
     </ScrollView>
   );
@@ -143,7 +169,6 @@ const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
   },
-
   scrollContainer: {
     flex: 1,
     justifyContent: "center",
@@ -177,7 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
-    marginTop:65,
+    marginTop: 65,
   },
   logo: {
     marginBottom: responsiveHeight(20),
@@ -193,7 +218,7 @@ const styles = StyleSheet.create({
   },
   titleSelect: {
     fontSize: responsiveFontSize(24),
-    marginTop:responsiveHeight(-20),
+    marginTop: responsiveHeight(-20),
   },
   textDarkMain: {
     color: "#E4BF7C",
@@ -204,7 +229,7 @@ const styles = StyleSheet.create({
   titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
-    marginBottom:responsiveHeight(-30),
+    marginBottom: responsiveHeight(-30),
   },
   cardLight: {
     backgroundColor: "white",
@@ -221,7 +246,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     marginTop: responsiveHeight(20),
-    marginBottom: responsiveHeight (20),
+    marginBottom: responsiveHeight(20),
   },
   bagImage: {
     width: responsiveWidth(300),
@@ -269,7 +294,6 @@ const styles = StyleSheet.create({
     width: responsiveWidth(60),
     height: responsiveHeight(50),
   },
-
   lightModeBackground: {
     backgroundColor: "#E4BF7C",
   },
@@ -285,7 +309,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
   },
-  
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  menuContainer: {
+    width: "80%",
+    padding: responsiveWidth(20),
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  menuItem: {
+    fontSize: responsiveFontSize(18),
+    marginVertical: responsiveHeight(10),
+  },
+  closeButton: {
+    fontSize: responsiveFontSize(18),
+    color: "blue",
+    marginTop: responsiveHeight(20),
+  },
 });
 
 export default Menu;
