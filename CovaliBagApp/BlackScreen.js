@@ -13,7 +13,7 @@ const BlackScreen = () => {
       useNativeDriver: true,
     }).start(() => {
       // Navigate to the Menu screen after animation completes
-      navigation.replace('Menu');
+      navigation.replace('Darylap');
     });
   }, [fadeAnim, navigation]);
 
