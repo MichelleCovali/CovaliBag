@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions,} from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Dimensions,
+  Modal,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -27,6 +36,7 @@ function responsiveFontSize(fontSize) {
 
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const getCurrentColorThemeBackground = () => {
     return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
@@ -35,13 +45,16 @@ const Menu = () => {
   const getCurrentColorThemeTextMain = () => {
     return isDarkMode ? styles.textDarkMain : styles.textLightMain;
   };
-
   const getCurrentColorThemeBagBox = () => {
     return isDarkMode ? styles.cardDark : styles.cardLight;
   };
 
   const toggleMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
   };
 
   return (
@@ -64,15 +77,18 @@ const Menu = () => {
         </View>
         <View style={styles.text}>
           <Text
+            // What is that ?
             style={[
-              getCurrentColorThemeTextMain(),
-              styles.titleSelect,
+              isDarkMode
+                ? styles.darkModeBackground
+                : styles.lightModeBackground,
+              styles,
             ]}
           >
             select
           </Text>
           <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
-            Bag
+            Bags
           </Text>
         </View>
         <SafeAreaView style={styles.scrollContainer}>
@@ -101,7 +117,7 @@ const Menu = () => {
                   </View>
                 </View>
                 {/* Back of card */}
-                <View style={[styles.bagBox, getCurrentColorThemeBagBox()]}>
+                <View style={[styles.backPage, getCurrentColorThemeBagBox()]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -110,15 +126,46 @@ const Menu = () => {
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
-          <Image
-            source={
-              isDarkMode
-                ? require("./assets/plusIconDark.png")
-                : require("./assets/plusIconLight.png")
-            }
-            style={styles.plusIcon}
-          />
+          <TouchableOpacity onPress={togglePopup}>
+            <Image
+              source={
+                isDarkMode
+                  ? require("./assets/plusIconDark.png")
+                  : require("./assets/plusIconLight.png")
+              }
+              style={styles.plusIcon}
+            />
+          </TouchableOpacity>
         </View>
+
+        {/* Popup Modal */}
+        <Modal
+          transparent={true}
+          visible={isPopupVisible}
+          animationType="slide"
+          onRequestClose={togglePopup}
+        >
+          <View style={styles.popupContainer}>
+            <View style={styles.popup}>
+              <Text style={styles.popupTitle}>Select an Option</Text>
+              {bags.map((bag) => (
+                <TouchableOpacity
+                  key={bag.id}
+                  style={styles.popupItem}
+                  onPress={() => {
+                    console.log(`Selected ${bag.name}`);
+                    togglePopup();
+                  }}
+                >
+                  <Text style={styles.popupItemText}>{bag.name}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity onPress={togglePopup} style={styles.closeButton}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -143,7 +190,6 @@ const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
   },
-
   scrollContainer: {
     flex: 1,
     justifyContent: "center",
@@ -177,7 +223,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
-    marginTop:65,
   },
   logo: {
     marginBottom: responsiveHeight(20),
@@ -191,9 +236,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  titleSelect: {
+  titleSelectLight: {
+    color: "#000000",
     fontSize: responsiveFontSize(24),
-    marginTop:responsiveHeight(-20),
+  },
+  titleSelectDark: {
+    color: "#E4BF7C",
+    fontSize: responsiveFontSize(24),
   },
   textDarkMain: {
     color: "#E4BF7C",
@@ -204,7 +253,6 @@ const styles = StyleSheet.create({
   titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
-    marginBottom:responsiveHeight(-30),
   },
   cardLight: {
     backgroundColor: "white",
@@ -214,18 +262,16 @@ const styles = StyleSheet.create({
   },
   bagBox: {
     width: responsiveWidth(310),
-    height: responsiveHeight(330),
+    height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-    marginTop: responsiveHeight(20),
-    marginBottom: responsiveHeight (20),
   },
   bagImage: {
     width: responsiveWidth(300),
-    height: responsiveHeight(220),
+    height: responsiveHeight(300),
     resizeMode: "contain",
     margin: responsiveWidth(30),
   },
@@ -262,8 +308,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginBottom: responsiveHeight(10),
-    marginTop: responsiveHeight(10),
+    marginBottom: responsiveHeight(40),
   },
   plusIcon: {
     width: responsiveWidth(60),
@@ -278,14 +323,64 @@ const styles = StyleSheet.create({
   },
   backPage: {
     width: responsiveWidth(310),
-    height: responsiveHeight(330),
+    height: responsiveHeight(410),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
   },
-  
+  popupContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  popup: {
+    width: responsiveWidth(300),
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  popupTitle: {
+    fontSize: responsiveFontSize(20),
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  popupItem: {
+    paddingVertical: 10,
+  },
+  popupItemText: {
+    fontSize: responsiveFontSize(16),
+  },
+  closeButton: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  closeButtonText: {
+    fontSize: responsiveFontSize(16),
+    color: "blue",
+  },
+  backPageLight: {
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+  },
+  backPageDark: {
+    width: responsiveWidth(310),
+    height: responsiveHeight(410),
+    margin: responsiveWidth(30),
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#E4BF7C",
+    borderRadius: 20,
+  },
 });
 
 export default Menu;
