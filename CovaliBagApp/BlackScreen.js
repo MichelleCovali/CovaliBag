@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Image, Animated } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useRef } from "react";
+import { View, StyleSheet, Image, Animated } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const BlackScreen = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -20,7 +20,7 @@ const BlackScreen = () => {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require('./assets/Covali.png')}
+        source={require("./assets/Covali.png")}
         style={[styles.image, { opacity: fadeAnim }]}
         resizeMode="contain"
       />
@@ -31,9 +31,9 @@ const BlackScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "black",
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: 200,
