@@ -25,7 +25,7 @@ function responsiveFontSize(fontSize) {
   return (fontSize * width) / baseWidth;
 }
 
-const DarylApp = () => {
+const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const getCurrentColorThemeBackground = () => {
@@ -288,4 +288,4 @@ const styles = StyleSheet.create({
   
 });
 
-export default DarylApp;
+export default Menu;

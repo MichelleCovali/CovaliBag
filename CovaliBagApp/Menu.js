@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions,} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -43,6 +35,7 @@ const Menu = () => {
   const getCurrentColorThemeTextMain = () => {
     return isDarkMode ? styles.textDarkMain : styles.textLightMain;
   };
+
   const getCurrentColorThemeBagBox = () => {
     return isDarkMode ? styles.cardDark : styles.cardLight;
   };
@@ -71,21 +64,18 @@ const Menu = () => {
         </View>
         <View style={styles.text}>
           <Text
-            // What is that ?
             style={[
-              isDarkMode
-                ? styles.darkModeBackground
-                : styles.lightModeBackground,
-              styles,
+              getCurrentColorThemeTextMain(),
+              styles.titleSelect,
             ]}
           >
             select
           </Text>
           <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
-            Bags
+            Bag
           </Text>
         </View>
-        <SafeAreaView style={styles.scrollContaine}>
+        <SafeAreaView style={styles.scrollContainer}>
           <ScrollView horizontal>
             {bags.map((bag) => (
               <FlipCard
@@ -110,8 +100,8 @@ const Menu = () => {
                     </View>
                   </View>
                 </View>
-                {/* back of card */}
-                <View style={[styles.backPage, getCurrentColorThemeBagBox()]}>
+                {/* Back of card */}
+                <View style={[styles.bagBox, getCurrentColorThemeBagBox()]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -187,6 +177,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
+    marginTop:65,
   },
   logo: {
     marginBottom: responsiveHeight(20),
@@ -200,13 +191,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  titleSelectLight: {
-    color: "#000000",
+  titleSelect: {
     fontSize: responsiveFontSize(24),
-  },
-  titleSelectDark: {
-    color: "#E4BF7C",
-    fontSize: responsiveFontSize(24),
+    marginTop:responsiveHeight(-20),
   },
   textDarkMain: {
     color: "#E4BF7C",
@@ -217,17 +204,8 @@ const styles = StyleSheet.create({
   titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
+    marginBottom:responsiveHeight(-30),
   },
-  // titleBagsDark: {
-  //   fontSize: responsiveFontSize(32),
-  //   fontWeight: "bold",
-  //   color: "#E4BF7C",
-  // },
-  // titleBagsLight: {
-  //   fontSize: responsiveFontSize(32),
-  //   fontWeight: "bold",
-  //   color: "#000000",
-  // },
   cardLight: {
     backgroundColor: "white",
   },
@@ -236,35 +214,18 @@ const styles = StyleSheet.create({
   },
   bagBox: {
     width: responsiveWidth(310),
-    height: responsiveHeight(410),
+    height: responsiveHeight(330),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-  },
-  bagBoxLight: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-  },
-  bagBoxDark: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
+    marginTop: responsiveHeight(20),
+    marginBottom: responsiveHeight (20),
   },
   bagImage: {
     width: responsiveWidth(300),
-    height: responsiveHeight(300),
+    height: responsiveHeight(220),
     resizeMode: "contain",
     margin: responsiveWidth(30),
   },
@@ -301,7 +262,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginBottom: responsiveHeight(40),
+    marginBottom: responsiveHeight(10),
+    marginTop: responsiveHeight(10),
   },
   plusIcon: {
     width: responsiveWidth(60),
@@ -316,33 +278,14 @@ const styles = StyleSheet.create({
   },
   backPage: {
     width: responsiveWidth(310),
-    height: responsiveHeight(410),
+    height: responsiveHeight(330),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
   },
-  backPageLight: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-  },
-  backPageDark: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E4BF7C",
-    borderRadius: 20,
-  },
+  
 });
 
 export default Menu;

@@ -13,7 +13,9 @@ const BlackScreen = () => {
       useNativeDriver: true,
     }).start(() => {
       // Navigate to the Menu screen after animation completes
-      navigation.replace('DarylApp');
+      navigation.replace('Menu');
+      // navigation.replace('Menu');
+      // navigation.replace('Menu');
     });
   }, [fadeAnim, navigation]);
 
