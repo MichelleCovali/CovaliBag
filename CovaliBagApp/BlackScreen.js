@@ -12,9 +12,10 @@ const BlackScreen = () => {
       duration: 3000,
       useNativeDriver: true,
     }).start(() => {
-      // Navigate to the Menu screen after animation completes
       navigation.replace('RogerApp');
       // navigation.replace('Menu');
+      // navigation.replace('LoadingAnimation');
+      // navigation.replace('DarylApp');
       // navigation.replace('Menu');
     });
   }, [fadeAnim, navigation]);

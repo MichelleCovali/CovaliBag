@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions,} from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -27,65 +27,52 @@ function responsiveFontSize(fontSize) {
 
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const backgroundColor = useRef(new Animated.Value(0)).current;
 
-  const getCurrentColorThemeBackground = () => {
-    return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
-  };
-
-  const getCurrentColorThemeTextMain = () => {
-    return isDarkMode ? styles.textDarkMain : styles.textLightMain;
-  };
-
-  const getCurrentColorThemeBagBox = () => {
-    return isDarkMode ? styles.cardDark : styles.cardLight;
+  const animateBackgroundColor = (toValue) => {
+    Animated.timing(backgroundColor, {
+      toValue,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
   };
 
   const toggleMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode((prevMode) => !prevMode);
+    animateBackgroundColor(isDarkMode ? 0 : 1);
   };
 
+  const interpolatedBackgroundColor = backgroundColor.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#E4BF7C", "#393939"],
+  });
+
   return (
-    <ScrollView
-      style={[styles.scrollViewStyle, getCurrentColorThemeBackground()]}
-    >
-      <View style={[styles.container]}>
+    <Animated.ScrollView style={[styles.scrollViewStyle, { backgroundColor: interpolatedBackgroundColor }]}>
+      <View style={styles.container}>
         <View style={styles.header}>
           <ToggleModeButton isDarkMode={isDarkMode} onPress={toggleMode} />
           <View style={styles.logoBox}>
             <Image
-              source={
-                isDarkMode
-                  ? require("./assets/Logo1.png")
-                  : require("./assets/main.png")
-              }
+              source={isDarkMode ? require("./assets/Logo1.png") : require("./assets/main.png")}
               style={styles.logo}
             />
           </View>
         </View>
         <View style={styles.text}>
-          <Text
-            style={[
-              getCurrentColorThemeTextMain(),
-              styles.titleSelect,
-            ]}
-          >
-            select
+          <Text style={[isDarkMode ? styles.textDarkMain : styles.textLightMain, styles.titleSelect]}>
+            Select
           </Text>
-          <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
+          <Text style={[isDarkMode ? styles.textDarkMain : styles.textLightMain, styles.titleBags]}>
             Bag
           </Text>
         </View>
         <SafeAreaView style={styles.scrollContainer}>
           <ScrollView horizontal>
             {bags.map((bag) => (
-              <FlipCard
-                flipHorizontal={true}
-                flipVertical={false}
-                friction={6}
-                key={bag.id}
-              >
+              <FlipCard flipHorizontal={true} flipVertical={false} friction={6} key={bag.id}>
                 {/* Front of card */}
-                <View style={[getCurrentColorThemeBagBox(), styles.bagBox]}>
+                <View style={[isDarkMode ? styles.cardDark : styles.cardLight, styles.bagBox]}>
                   <Image source={bag.imageUrl} style={styles.bagImage} />
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
@@ -93,15 +80,12 @@ const Menu = () => {
                       <Text style={styles.modelName}>{bag.name}</Text>
                     </View>
                     <View style={styles.warningRow}>
-                      <Image
-                        source={require("./assets/warning-icon.png")}
-                        style={styles.warningIcon}
-                      />
+                      <Image source={require("./assets/warning-icon.png")} style={styles.warningIcon} />
                     </View>
                   </View>
                 </View>
                 {/* Back of card */}
-                <View style={[styles.bagBox, getCurrentColorThemeBagBox()]}>
+                <View style={[styles.bagBox, isDarkMode ? styles.cardDark : styles.cardLight]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -111,16 +95,12 @@ const Menu = () => {
         </SafeAreaView>
         <View style={styles.plusRow}>
           <Image
-            source={
-              isDarkMode
-                ? require("./assets/plusIconDark.png")
-                : require("./assets/plusIconLight.png")
-            }
+            source={isDarkMode ? require("./assets/plusIconDark.png") : require("./assets/plusIconLight.png")}
             style={styles.plusIcon}
           />
         </View>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 
@@ -128,11 +108,7 @@ const ToggleModeButton = ({ isDarkMode, onPress }) => {
   return (
     <TouchableOpacity style={styles.toggleButton} onPress={onPress}>
       <Image
-        source={
-          isDarkMode
-            ? require("./assets/darkmode.png")
-            : require("./assets/lightmode.png")
-        }
+        source={isDarkMode ? require("./assets/darkmode.png") : require("./assets/lightmode.png")}
         style={styles.modeIcon}
       />
     </TouchableOpacity>
@@ -143,7 +119,6 @@ const styles = StyleSheet.create({
   scrollViewStyle: {
     flex: 1,
   },
-
   scrollContainer: {
     flex: 1,
     justifyContent: "center",
@@ -177,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
-    marginTop:65,
+    marginTop: 65,
   },
   logo: {
     marginBottom: responsiveHeight(20),
@@ -193,7 +168,7 @@ const styles = StyleSheet.create({
   },
   titleSelect: {
     fontSize: responsiveFontSize(24),
-    marginTop:responsiveHeight(-20),
+    marginTop: responsiveHeight(-20),
   },
   textDarkMain: {
     color: "#E4BF7C",
@@ -204,7 +179,7 @@ const styles = StyleSheet.create({
   titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
-    marginBottom:responsiveHeight(-30),
+    marginBottom: responsiveHeight(-30),
   },
   cardLight: {
     backgroundColor: "white",
@@ -221,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     marginTop: responsiveHeight(20),
-    marginBottom: responsiveHeight (20),
+    marginBottom: responsiveHeight(20),
   },
   bagImage: {
     width: responsiveWidth(300),
@@ -269,23 +244,6 @@ const styles = StyleSheet.create({
     width: responsiveWidth(60),
     height: responsiveHeight(50),
   },
-
-  lightModeBackground: {
-    backgroundColor: "#E4BF7C",
-  },
-  darkModeBackground: {
-    backgroundColor: "#393939",
-  },
-  backPage: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(330),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-  },
-  
 });
 
 export default Menu;
