@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Dimensions,
-  Modal,
-  FlatList,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Modal, } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -21,6 +11,9 @@ const bags = [
   { id: 0, name: "Bag 1", imageUrl: require("./assets/bag.png") },
   { id: 1, name: "Bag 2", imageUrl: require("./assets/bag.png") },
   { id: 2, name: "Bag 3", imageUrl: require("./assets/bag2.jpg") },
+  { id: 3, name: "Bag 4", imageUrl: require("./assets/bag.png") },
+  { id: 4, name: "Bag 5", imageUrl: require("./assets/bag.png") },
+  { id: 5, name: "Bag 6", imageUrl: require("./assets/bag2.jpg") },
 ];
 
 function responsiveWidth(num) {
@@ -37,7 +30,7 @@ function responsiveFontSize(fontSize) {
 
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const getCurrentColorThemeBackground = () => {
     return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
@@ -55,12 +48,8 @@ const Menu = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const handlePlusPress = () => {
-    setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
+  const toggleMenu = () => {
+    setIsMenuVisible(!isMenuVisible);
   };
 
   return (
@@ -82,16 +71,16 @@ const Menu = () => {
           </View>
         </View>
         <View style={styles.text}>
-          <Text style={[
-              isDarkMode
-                ? styles.darkModeBackground
-                : styles.lightModeBackground,
-              styles,
-            ]}>
+          <Text
+            style={[
+              getCurrentColorThemeTextMain(),
+              styles.titleSelect,
+            ]}
+          >
             select
           </Text>
           <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
-            Bags
+            Bag
           </Text>
         </View>
         <SafeAreaView style={styles.scrollContainer}>
@@ -120,7 +109,7 @@ const Menu = () => {
                   </View>
                 </View>
                 {/* Back of card */}
-                <View style={[styles.backPage, getCurrentColorThemeBagBox()]}>
+                <View style={[styles.bagBox, getCurrentColorThemeBagBox()]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -129,7 +118,7 @@ const Menu = () => {
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
-          <TouchableOpacity onPress={handlePlusPress}>
+          <TouchableOpacity onPress={toggleMenu}>
             <Image
               source={
                 isDarkMode
@@ -140,39 +129,25 @@ const Menu = () => {
             />
           </TouchableOpacity>
         </View>
-
-        {/* Modal */}
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Choose an Option</Text>
-              <FlatList
-                data={bags}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.modalItem}
-                    onPress={() => {
-                      // Handle item selection
-                      console.log(item.name);
-                      closeModal();
-                    }}
-                  >
-                    <Text style={styles.modalItemText}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item.id.toString()}
-              />
-              <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
+        {isMenuVisible && (
+          <Modal
+            transparent={true}
+            animationType="slide"
+            visible={isMenuVisible}
+            onRequestClose={toggleMenu}
+          >
+            <View style={styles.modalBackground}>
+              <View style={styles.menuContainer}>
+                <Text style={styles.menuItem}>Option 1</Text>
+                <Text style={styles.menuItem}>Option 2</Text>
+                <Text style={styles.menuItem}>Option 3</Text>
+                <TouchableOpacity onPress={toggleMenu}>
+                  <Text style={styles.closeButton}>Close</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        )}
       </View>
     </ScrollView>
   );
@@ -230,6 +205,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     justifyContent: "center",
+    marginTop: 65,
   },
   logo: {
     marginBottom: responsiveHeight(20),
@@ -243,13 +219,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
-  titleSelectLight: {
-    color: "#000000",
+  titleSelect: {
     fontSize: responsiveFontSize(24),
-  },
-  titleSelectDark: {
-    color: "#E4BF7C",
-    fontSize: responsiveFontSize(24),
+    marginTop: responsiveHeight(-20),
   },
   textDarkMain: {
     color: "#E4BF7C",
@@ -260,6 +232,7 @@ const styles = StyleSheet.create({
   titleBags: {
     fontSize: responsiveFontSize(32),
     fontWeight: "bold",
+    marginBottom: responsiveHeight(-30),
   },
   cardLight: {
     backgroundColor: "white",
@@ -269,35 +242,18 @@ const styles = StyleSheet.create({
   },
   bagBox: {
     width: responsiveWidth(310),
-    height: responsiveHeight(410),
+    height: responsiveHeight(330),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
-  },
-  bagBoxLight: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-  },
-  bagBoxDark: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
+    marginTop: responsiveHeight(20),
+    marginBottom: responsiveHeight(20),
   },
   bagImage: {
     width: responsiveWidth(300),
-    height: responsiveHeight(300),
+    height: responsiveHeight(220),
     resizeMode: "contain",
     margin: responsiveWidth(30),
   },
@@ -334,7 +290,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginBottom: responsiveHeight(40),
+    marginBottom: responsiveHeight(10),
+    marginTop: responsiveHeight(10),
   },
   plusIcon: {
     width: responsiveWidth(60),
@@ -348,66 +305,34 @@ const styles = StyleSheet.create({
   },
   backPage: {
     width: responsiveWidth(310),
-    height: responsiveHeight(410),
+    height: responsiveHeight(330),
     margin: responsiveWidth(30),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 20,
   },
-  backPageLight: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-  },
-  backPageDark: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(410),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E4BF7C",
-    borderRadius: 20,
-  },
-  // ------------------------------------------------------- Modal styles
-  modalOverlay: {
+  modalBackground: {
     flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  modalContainer: {
-    width: responsiveWidth(300),
+  menuContainer: {
+    width: "80%",
     padding: responsiveWidth(20),
     backgroundColor: "white",
     borderRadius: 10,
-  },
-  modalTitle: {
-    fontSize: responsiveFontSize(20),
-    fontWeight: "bold",
-    marginBottom: responsiveHeight(10),
-  },
-  modalItem: {
-    padding: responsiveWidth(10),
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  modalItemText: {
-    fontSize: responsiveFontSize(18),
-  },
-  closeButton: {
-    marginTop: responsiveHeight(20),
     alignItems: "center",
   },
-  closeButtonText: {
+  menuItem: {
+    fontSize: responsiveFontSize(18),
+    marginVertical: responsiveHeight(10),
+  },
+  closeButton: {
     fontSize: responsiveFontSize(18),
     color: "blue",
+    marginTop: responsiveHeight(20),
   },
 });
 
