@@ -17,8 +17,8 @@ import FlipCard from "react-native-flip-card";
 import styles from '../css/style';
 
 const { width, height } = Dimensions.get("window");
-const baseWidth = 375; 
-const baseHeight = 667; 
+const baseWidth = 375; // Base screen width, e.g., iPhone X
+const baseHeight = 667; // Base screen height
 
 const initialBags = [
   { id: 0, name: "Model Covali", imageUrl: require("../assets/bag.png"), items: [] },
@@ -55,6 +55,7 @@ const RogerApp = () => {
   const [isItemModalVisible, setIsItemModalVisible] = useState(false);
   const [newItemName, setNewItemName] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [isRemoveBagModalVisible, setIsRemoveBagModalVisible] = useState(false);
 
   const getCurrentColorThemeBackground = () => {
     return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
@@ -137,6 +138,13 @@ const RogerApp = () => {
     setSelectedItem(null);
   };
 
+  const removeBag = () => {
+    const updatedBags = bags.filter(bag => bag.id !== selectedBag.id);
+    setBags(updatedBags);
+    setIsRemoveBagModalVisible(false);
+    setSelectedBag(null);
+  };
+
   return (
     <SafeAreaView style={[styles.container, getCurrentColorThemeBackground()]}>
       <ScrollView style={styles.scrollViewStyle}>
@@ -160,6 +168,15 @@ const RogerApp = () => {
                 {/* Front of card */}
                 <View style={[getCurrentColorThemeBagBox(), styles.bagBox]}>
                   <Image source={bag.imageUrl} style={styles.bagImage} />
+                  <TouchableOpacity
+                    style={styles.warningIconRedDot}
+                    onPress={() => {
+                      setSelectedBag(bag);
+                      setIsRemoveBagModalVisible(true);
+                    }}
+                  >
+                    <Image source={require("../assets/remove.jpg")} style={styles.warningIcon} />
+                  </TouchableOpacity>
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
                       <Text style={styles.limitedEdition}>limited edition</Text>
@@ -265,6 +282,15 @@ const RogerApp = () => {
             </>
           )}
           <Button title="Cancel" onPress={() => setIsItemModalVisible(false)} />
+        </View>
+      </Modal>
+
+      {/* Remove Bag Modal */}
+      <Modal animationType="slide" transparent={true} visible={isRemoveBagModalVisible} onRequestClose={() => setIsRemoveBagModalVisible(false)}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>Are you sure you want to remove this bag and all its items?</Text>
+          <Button title="Remove Bag" onPress={removeBag} />
+          <Button title="Cancel" onPress={() => setIsRemoveBagModalVisible(false)} />
         </View>
       </Modal>
     </SafeAreaView>

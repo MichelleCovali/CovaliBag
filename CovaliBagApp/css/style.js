@@ -1,8 +1,8 @@
 import { StyleSheet, Dimensions } from 'react-native';
 
 const { width, height } = Dimensions.get("window");
-const baseWidth = 375; 
-const baseHeight = 667; 
+const baseWidth = 375; // Base screen width, e.g., iPhone X
+const baseHeight = 667; // Base screen height
 
 function responsiveWidth(num) {
   return (width * num) / baseWidth;
@@ -132,6 +132,11 @@ const styles = StyleSheet.create({
   warningIcon: {
     width: responsiveWidth(35),
     height: responsiveHeight(35),
+  },
+  warningIconRedDot: {
+    position: 'absolute',
+    top: responsiveHeight(10),
+    right: responsiveWidth(10),
   },
   warningRow: {
     marginRight: responsiveWidth(10),
