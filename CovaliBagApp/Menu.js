@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Modal, } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 
@@ -17,7 +17,7 @@ function responsiveWidth(num) {
   return (width * num) / baseWidth;
 }
 
-function responsiveHeight(num) {
+function responsiveHeight(num) { 
   return (height * num) / baseHeight;
 }
 
@@ -27,70 +27,52 @@ function responsiveFontSize(fontSize) {
 
 const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const backgroundColor = useRef(new Animated.Value(0)).current;
 
-  const getCurrentColorThemeBackground = () => {
-    return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
-  };
-
-  const getCurrentColorThemeTextMain = () => {
-    return isDarkMode ? styles.textDarkMain : styles.textLightMain;
-  };
-
-  const getCurrentColorThemeBagBox = () => {
-    return isDarkMode ? styles.cardDark : styles.cardLight;
+  const animateBackgroundColor = (toValue) => {
+    Animated.timing(backgroundColor, {
+      toValue,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
   };
 
   const toggleMode = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode((prevMode) => !prevMode);
+    animateBackgroundColor(isDarkMode ? 0 : 1);
   };
 
-  const toggleMenu = () => {
-    setIsMenuVisible(!isMenuVisible);
-  };
+  const interpolatedBackgroundColor = backgroundColor.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["#E4BF7C", "#393939"],
+  });
 
   return (
-    <ScrollView
-      style={[styles.scrollViewStyle, getCurrentColorThemeBackground()]}
-    >
-      <View style={[styles.container]}>
+    <Animated.ScrollView style={[styles.scrollViewStyle, { backgroundColor: interpolatedBackgroundColor }]}>
+      <View style={styles.container}>
         <View style={styles.header}>
           <ToggleModeButton isDarkMode={isDarkMode} onPress={toggleMode} />
           <View style={styles.logoBox}>
             <Image
-              source={
-                isDarkMode
-                  ? require("./assets/Logo1.png")
-                  : require("./assets/main.png")
-              }
+              source={isDarkMode ? require("./assets/Logo1.png") : require("./assets/main.png")}
               style={styles.logo}
             />
           </View>
         </View>
         <View style={styles.text}>
-          <Text
-            style={[
-              getCurrentColorThemeTextMain(),
-              styles.titleSelect,
-            ]}
-          >
-            select
+          <Text style={[isDarkMode ? styles.textDarkMain : styles.textLightMain, styles.titleSelect]}>
+            Select
           </Text>
-          <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>
+          <Text style={[isDarkMode ? styles.textDarkMain : styles.textLightMain, styles.titleBags]}>
             Bag
           </Text>
         </View>
         <SafeAreaView style={styles.scrollContainer}>
           <ScrollView horizontal>
             {bags.map((bag) => (
-              <FlipCard
-                flipHorizontal={true}
-                flipVertical={false}
-                friction={6}
-                key={bag.id}
-              >
+              <FlipCard flipHorizontal={true} flipVertical={false} friction={6} key={bag.id}>
                 {/* Front of card */}
-                <View style={[getCurrentColorThemeBagBox(), styles.bagBox]}>
+                <View style={[isDarkMode ? styles.cardDark : styles.cardLight, styles.bagBox]}>
                   <Image source={bag.imageUrl} style={styles.bagImage} />
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
@@ -98,15 +80,12 @@ const Menu = () => {
                       <Text style={styles.modelName}>{bag.name}</Text>
                     </View>
                     <View style={styles.warningRow}>
-                      <Image
-                        source={require("./assets/warning-icon.png")}
-                        style={styles.warningIcon}
-                      />
+                      <Image source={require("./assets/warning-icon.png")} style={styles.warningIcon} />
                     </View>
                   </View>
                 </View>
                 {/* Back of card */}
-                <View style={[styles.bagBox, getCurrentColorThemeBagBox()]}>
+                <View style={[styles.bagBox, isDarkMode ? styles.cardDark : styles.cardLight]}>
                   <Text style={styles.limitedEdition}>limited edition</Text>
                   <Text style={styles.modelName}>{bag.name}</Text>
                 </View>
@@ -115,38 +94,13 @@ const Menu = () => {
           </ScrollView>
         </SafeAreaView>
         <View style={styles.plusRow}>
-          <TouchableOpacity onPress={toggleMenu}>
-            <Image
-              source={
-                isDarkMode
-                  ? require("./assets/plusIconDark.png")
-                  : require("./assets/plusIconLight.png")
-              }
-              style={styles.plusIcon}
-            />
-          </TouchableOpacity>
+          <Image
+            source={isDarkMode ? require("./assets/plusIconDark.png") : require("./assets/plusIconLight.png")}
+            style={styles.plusIcon}
+          />
         </View>
-        {isMenuVisible && (
-          <Modal
-            transparent={true}
-            animationType="slide"
-            visible={isMenuVisible}
-            onRequestClose={toggleMenu}
-          >
-            <View style={styles.modalBackground}>
-              <View style={styles.menuContainer}>
-                <Text style={styles.menuItem}>Option 1</Text>
-                <Text style={styles.menuItem}>Option 2</Text>
-                <Text style={styles.menuItem}>Option 3</Text>
-                <TouchableOpacity onPress={toggleMenu}>
-                  <Text style={styles.closeButton}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-        )}
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 
@@ -154,11 +108,7 @@ const ToggleModeButton = ({ isDarkMode, onPress }) => {
   return (
     <TouchableOpacity style={styles.toggleButton} onPress={onPress}>
       <Image
-        source={
-          isDarkMode
-            ? require("./assets/darkmode.png")
-            : require("./assets/lightmode.png")
-        }
+        source={isDarkMode ? require("./assets/darkmode.png") : require("./assets/lightmode.png")}
         style={styles.modeIcon}
       />
     </TouchableOpacity>
@@ -293,43 +243,6 @@ const styles = StyleSheet.create({
   plusIcon: {
     width: responsiveWidth(60),
     height: responsiveHeight(50),
-  },
-  lightModeBackground: {
-    backgroundColor: "#E4BF7C",
-  },
-  darkModeBackground: {
-    backgroundColor: "#393939",
-  },
-  backPage: {
-    width: responsiveWidth(310),
-    height: responsiveHeight(330),
-    margin: responsiveWidth(30),
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  menuContainer: {
-    width: "80%",
-    padding: responsiveWidth(20),
-    backgroundColor: "white",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  menuItem: {
-    fontSize: responsiveFontSize(18),
-    marginVertical: responsiveHeight(10),
-  },
-  closeButton: {
-    fontSize: responsiveFontSize(18),
-    color: "blue",
-    marginTop: responsiveHeight(20),
   },
 });
 

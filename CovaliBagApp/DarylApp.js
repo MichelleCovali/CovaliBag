@@ -17,7 +17,7 @@ function responsiveWidth(num) {
   return (width * num) / baseWidth;
 }
 
-function responsiveHeight(num) {
+function responsiveHeight(num) { 
   return (height * num) / baseHeight;
 }
 
