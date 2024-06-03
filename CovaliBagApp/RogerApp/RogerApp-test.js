@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,19 +11,10 @@ import {
   TextInput,
   Button,
   FlatList,
-  Switch,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
-import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-import * as Notifications from "expo-notifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../css/style';
-import '../task'; // Ensure the task file is imported
-
-const LOCATION_TASK_NAME = 'background-location-task';
 
 const { width, height } = Dimensions.get("window");
 const baseWidth = 375; // Base screen width, e.g., iPhone X
@@ -66,32 +57,6 @@ const RogerApp = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRemoveBagModalVisible, setIsRemoveBagModalVisible] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
-        return;
-      }
-
-      let backgroundStatus = await Location.requestBackgroundPermissionsAsync();
-      if (backgroundStatus.status !== 'granted') {
-        Alert.alert('Permission to access background location was denied');
-        return;
-      }
-
-      configureBackgroundLocation();
-    })();
-    loadBags();
-  }, []);
-
-  const configureBackgroundLocation = async () => {
-    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-      accuracy: Location.Accuracy.Highest,
-      distanceInterval: 1, // Minimum distance in meters
-    });
-  };
-
   const getCurrentColorThemeBackground = () => {
     return isDarkMode ? styles.darkModeBackground : styles.lightModeBackground;
   };
@@ -108,40 +73,37 @@ const RogerApp = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const addNewBag = async () => {
+  const addNewBag = () => {
     const newBag = {
       id: bags.length,
       name: newBagName,
       imageUrl: selectedBagImage,
       items: [],
     };
-    const updatedBags = [...bags, newBag];
-    setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
+    setBags([...bags, newBag]);
     setIsBagModalVisible(false);
     setNewBagName("");
     setSelectedBagImage(defaultBagImages[0]);
   };
 
-  const addItemToBag = async () => {
+  const addItemToBag = () => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
         return {
           ...bag,
-          items: [...bag.items, { id: bag.items.length, name: newItemName, status: "green", isOn: false, location: null }],
+          items: [...bag.items, { id: bag.items.length, name: newItemName, status: "green" }],
         };
       }
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setNewItemName("");
     setSelectedItem(null);
   };
 
-  const renameItem = async (itemId, newName) => {
+  const renameItem = (itemId, newName) => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
@@ -155,13 +117,12 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setNewItemName("");
     setSelectedItem(null);
   };
 
-  const deleteItem = async (itemId) => {
+  const deleteItem = (itemId) => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
@@ -173,74 +134,15 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setSelectedItem(null);
   };
 
-  const removeBag = async () => {
+  const removeBag = () => {
     const updatedBags = bags.filter(bag => bag.id !== selectedBag.id);
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsRemoveBagModalVisible(false);
     setSelectedBag(null);
-  };
-
-  const toggleItemOnOff = async (bagId, itemId) => {
-    console.log(`Toggling item ${itemId} in bag ${bagId}`); // Debugging statement
-    const updatedBags = bags.map((bag) => {
-      if (bag.id === bagId) {
-        const updatedItems = bag.items.map((item) => {
-          if (item.id === itemId) {
-            const newItem = { ...item, isOn: !item.isOn };
-            console.log(`New item state: ${JSON.stringify(newItem)}`); // Debugging statement
-            if (newItem.isOn) {
-              saveItemLocation(newItem);
-            } else {
-              // Clear the saved location when the item is turned off
-              newItem.location = null;
-            }
-            return newItem;
-          }
-          return item;
-        });
-        return { ...bag, items: updatedItems };
-      }
-      return bag;
-    });
-    setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
-    console.log(`Updated bags: ${JSON.stringify(updatedBags)}`); // Debugging statement
-  };
-
-  const saveItemLocation = async (item) => {
-    try {
-      let location = await Location.getCurrentPositionAsync({});
-      const updatedBags = bags.map((bag) => {
-        if (selectedBag && bag.id === selectedBag.id) { // Check if selectedBag is not null
-          const updatedItems = bag.items.map((bagItem) => {
-            if (bagItem.id === item.id) {
-              return { ...bagItem, location: location.coords };
-            }
-            return bagItem;
-          });
-          return { ...bag, items: updatedItems };
-        }
-        return bag;
-      });
-      setBags(updatedBags);
-      await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
-      console.log(`Location saved for item: ${JSON.stringify(item)}`); // Debugging statement
-    } catch (error) {
-      console.error("Error saving item location: ", error);
-    }
-  };
-
-  const loadBags = async () => {
-    const storedBags = await AsyncStorage.getItem('bags');
-    if (storedBags) {
-      setBags(JSON.parse(storedBags));
-    }
   };
 
   return (
@@ -273,7 +175,7 @@ const RogerApp = () => {
                       setIsRemoveBagModalVisible(true);
                     }}
                   >
-                    <Image source={require("../assets/warning-icon.png")} style={styles.warningIcon} />
+                    <Image source={require("../assets/trashDarker.png")} style={styles.warningIcon} />
                   </TouchableOpacity>
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
@@ -292,23 +194,18 @@ const RogerApp = () => {
                   <FlatList
                     data={bag.items}
                     renderItem={({ item }) => (
-                      <View style={styles.itemRow}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setSelectedItem(item);
-                            setSelectedBag(bag);
-                            setNewItemName(item.name);
-                            setIsItemModalVisible(true);
-                          }}
-                        >
-                          <Text style={styles.itemName}>{item.name}</Text>
-                          <View style={[styles.statusIndicator, { backgroundColor: item.status }]} />
-                        </TouchableOpacity>
-                        <Switch
-                          value={item.isOn}
-                          onValueChange={() => toggleItemOnOff(bag.id, item.id)}
-                        />
-                      </View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedItem(item);
+                          setSelectedBag(bag);
+                          setNewItemName(item.name);
+                          setIsItemModalVisible(true);
+                        }}
+                        style={styles.itemRow}
+                      >
+                        <Text style={styles.itemName}>{item.name}</Text>
+                        <View style={[styles.statusIndicator, { backgroundColor: item.status }]} />
+                      </TouchableOpacity>
                     )}
                     keyExtractor={(item) => item.id.toString()}
                   />

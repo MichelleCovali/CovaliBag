@@ -19,9 +19,7 @@ import FlipCard from "react-native-flip-card";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as Notifications from "expo-notifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from '../css/style';
-import '../task'; // Ensure the task file is imported
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -67,29 +65,17 @@ const RogerApp = () => {
   const [isRemoveBagModalVisible, setIsRemoveBagModalVisible] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
-        return;
-      }
-
-      let backgroundStatus = await Location.requestBackgroundPermissionsAsync();
-      if (backgroundStatus.status !== 'granted') {
-        Alert.alert('Permission to access background location was denied');
-        return;
-      }
-
-      configureBackgroundLocation();
-    })();
-    loadBags();
+    configureBackgroundLocation();
   }, []);
 
   const configureBackgroundLocation = async () => {
-    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-      accuracy: Location.Accuracy.Highest,
-      distanceInterval: 1, // Minimum distance in meters
-    });
+    const { status } = await Location.requestBackgroundPermissionsAsync();
+    if (status === 'granted') {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 1, // Minimum distance in meters
+      });
+    }
   };
 
   const getCurrentColorThemeBackground = () => {
@@ -108,22 +94,20 @@ const RogerApp = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  const addNewBag = async () => {
+  const addNewBag = () => {
     const newBag = {
       id: bags.length,
       name: newBagName,
       imageUrl: selectedBagImage,
       items: [],
     };
-    const updatedBags = [...bags, newBag];
-    setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
+    setBags([...bags, newBag]);
     setIsBagModalVisible(false);
     setNewBagName("");
     setSelectedBagImage(defaultBagImages[0]);
   };
 
-  const addItemToBag = async () => {
+  const addItemToBag = () => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
@@ -135,13 +119,12 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setNewItemName("");
     setSelectedItem(null);
   };
 
-  const renameItem = async (itemId, newName) => {
+  const renameItem = (itemId, newName) => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
@@ -155,13 +138,12 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setNewItemName("");
     setSelectedItem(null);
   };
 
-  const deleteItem = async (itemId) => {
+  const deleteItem = (itemId) => {
     if (!selectedBag) return;
     const updatedBags = bags.map((bag) => {
       if (bag.id === selectedBag.id) {
@@ -173,32 +155,25 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsItemModalVisible(false);
     setSelectedItem(null);
   };
 
-  const removeBag = async () => {
+  const removeBag = () => {
     const updatedBags = bags.filter(bag => bag.id !== selectedBag.id);
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
     setIsRemoveBagModalVisible(false);
     setSelectedBag(null);
   };
 
-  const toggleItemOnOff = async (bagId, itemId) => {
-    console.log(`Toggling item ${itemId} in bag ${bagId}`); // Debugging statement
+  const toggleItemOnOff = (bagId, itemId) => {
     const updatedBags = bags.map((bag) => {
       if (bag.id === bagId) {
         const updatedItems = bag.items.map((item) => {
           if (item.id === itemId) {
             const newItem = { ...item, isOn: !item.isOn };
-            console.log(`New item state: ${JSON.stringify(newItem)}`); // Debugging statement
             if (newItem.isOn) {
               saveItemLocation(newItem);
-            } else {
-              // Clear the saved location when the item is turned off
-              newItem.location = null;
             }
             return newItem;
           }
@@ -209,38 +184,58 @@ const RogerApp = () => {
       return bag;
     });
     setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
-    console.log(`Updated bags: ${JSON.stringify(updatedBags)}`); // Debugging statement
   };
 
   const saveItemLocation = async (item) => {
-    try {
-      let location = await Location.getCurrentPositionAsync({});
-      const updatedBags = bags.map((bag) => {
-        if (selectedBag && bag.id === selectedBag.id) { // Check if selectedBag is not null
-          const updatedItems = bag.items.map((bagItem) => {
-            if (bagItem.id === item.id) {
-              return { ...bagItem, location: location.coords };
-            }
-            return bagItem;
-          });
-          return { ...bag, items: updatedItems };
-        }
-        return bag;
-      });
-      setBags(updatedBags);
-      await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
-      console.log(`Location saved for item: ${JSON.stringify(item)}`); // Debugging statement
-    } catch (error) {
-      console.error("Error saving item location: ", error);
-    }
+    let location = await Location.getCurrentPositionAsync({});
+    const updatedBags = bags.map((bag) => {
+      if (bag.id === selectedBag.id) {
+        const updatedItems = bag.items.map((bagItem) => {
+          if (bagItem.id === item.id) {
+            return { ...bagItem, location: location.coords };
+          }
+          return bagItem;
+        });
+        return { ...bag, items: updatedItems };
+      }
+      return bag;
+    });
+    setBags(updatedBags);
   };
 
-  const loadBags = async () => {
-    const storedBags = await AsyncStorage.getItem('bags');
-    if (storedBags) {
-      setBags(JSON.parse(storedBags));
-    }
+  const checkDistanceFromItems = (location) => {
+    bags.forEach(bag => {
+      bag.items.forEach(item => {
+        if (item.isOn && item.location) {
+          const distance = calculateDistance(location, item.location);
+          if (distance > 0.5) {
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Item Missing",
+                body: `You are missing the item "${item.name}" in bag "${bag.name}"`,
+              },
+              trigger: null,
+            });
+          }
+        }
+      });
+    });
+  };
+
+  const calculateDistance = (location1, location2) => {
+    const rad = (x) => (x * Math.PI) / 180;
+    const R = 6378137; // Earth’s mean radius in meter
+    const dLat = rad(location2.latitude - location1.latitude);
+    const dLong = rad(location2.longitude - location1.longitude);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(rad(location1.latitude)) *
+        Math.cos(rad(location2.latitude)) *
+        Math.sin(dLong / 2) *
+        Math.sin(dLong / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance / 1000; // returns the distance in kilometers
   };
 
   return (
@@ -409,3 +404,4 @@ const ToggleModeButton = ({ isDarkMode, onPress }) => {
 };
 
 export default RogerApp;
+
