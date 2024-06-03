@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
-import styles from '../css/style';
 
 const { width, height } = Dimensions.get("window");
 const baseWidth = 375; // Base screen width, e.g., iPhone X
