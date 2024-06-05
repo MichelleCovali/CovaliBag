@@ -12,8 +12,8 @@ const BlackScreen = () => {
       duration: 3000,
       useNativeDriver: true,
     }).start(() => {
-      navigation.replace('RogerApp');
-      // navigation.replace('Menu');
+      // navigation.replace('RogerApp');
+      navigation.replace('Menu');
       // navigation.replace('LoadingAnimation');
       // navigation.replace('DarylApp');
       // navigation.replace('Menu');

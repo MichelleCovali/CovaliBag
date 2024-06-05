@@ -20,8 +20,8 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import styles from '../css/style';
-import '../task'; // Ensure the task file is imported
+import styles from './css/style';
+import './task'; // Ensure the task file is imported
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -30,16 +30,16 @@ const baseWidth = 375; // Base screen width, e.g., iPhone X
 const baseHeight = 667; // Base screen height
 
 const initialBags = [
-  { id: 0, name: "Model Covali", imageUrl: require("../assets/bag.png"), items: [] },
-  { id: 1, name: "Model 2", imageUrl: require("../assets/bag.png"), items: [] },
-  { id: 2, name: "Model 3", imageUrl: require("../assets/bag2.jpg"), items: [] },
+  { id: 0, name: "Model Covali", imageUrl: require("./assets/bag.png"), items: [] },
+  { id: 1, name: "Model 2", imageUrl: require("./assets/bag.png"), items: [] },
+  { id: 2, name: "Model 3", imageUrl: require("./assets/bag2.jpg"), items: [] },
 ];
 
 const defaultBagImages = [
-  require("../assets/bag.png"),
-  require("../assets/bag.png"),
-  require("../assets/bag.png"),
-  require("../assets/bag.png"),
+  require("./assets/bag.png"),
+  require("./assets/bag.png"),
+  require("./assets/bag.png"),
+  require("./assets/bag.png"),
 ];
 
 function responsiveWidth(num) {
@@ -54,7 +54,7 @@ function responsiveFontSize(fontSize) {
   return (fontSize * width) / baseWidth;
 }
 
-const RogerApp = () => {
+const Menu = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [bags, setBags] = useState(initialBags);
   const [isBagModalVisible, setIsBagModalVisible] = useState(false);
@@ -250,7 +250,7 @@ const RogerApp = () => {
           <ToggleModeButton isDarkMode={isDarkMode} onPress={toggleMode} />
           <View style={styles.logoBox}>
             <Image
-              source={isDarkMode ? require("../assets/Logo1.png") : require("../assets/main.png")}
+              source={isDarkMode ? require("./assets/Logo1.png") : require("./assets/main.png")}
               style={styles.logo}
             />
           </View>
@@ -273,7 +273,7 @@ const RogerApp = () => {
                       setIsRemoveBagModalVisible(true);
                     }}
                   >
-                    <Image source={require("../assets/warning-icon.png")} style={styles.warningIcon} />
+                    <Image source={require("./assets/warning-icon.png")} style={styles.warningIcon} />
                   </TouchableOpacity>
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
@@ -281,7 +281,7 @@ const RogerApp = () => {
                       <Text style={styles.modelName}>{bag.name}</Text>
                     </View>
                     <View style={styles.warningRow}>
-                      <Image source={require("../assets/warning-icon.png")} style={styles.warningIcon} />
+                      <Image source={require("./assets/warning-icon.png")} style={styles.warningIcon} />
                     </View>
                   </View>
                 </View>
@@ -321,7 +321,7 @@ const RogerApp = () => {
                     }}
                   >
                     <Image
-                      source={require("../assets/plusIconDark.png")} // Replace with the path to your add item icon
+                      source={require("./assets/plusIconDark.png")} // Replace with the path to your add item icon
                       style={styles.addItemIcon}
                     />
                   </TouchableOpacity>
@@ -333,7 +333,7 @@ const RogerApp = () => {
         <View style={styles.plusRow}>
           <TouchableOpacity onPress={() => setIsBagModalVisible(true)}>
             <Image
-              source={isDarkMode ? require("../assets/plusIconDark.png") : require("../assets/plusIconLight.png")}
+              source={isDarkMode ? require("./assets/plusIconDark.png") : require("./assets/plusIconLight.png")}
               style={styles.plusIcon}
             />
           </TouchableOpacity>
@@ -403,9 +403,9 @@ const RogerApp = () => {
 const ToggleModeButton = ({ isDarkMode, onPress }) => {
   return (
     <TouchableOpacity style={styles.toggleButton} onPress={onPress}>
-      <Image source={isDarkMode ? require("../assets/darkmode.png") : require("../assets/lightmode.png")} style={styles.modeIcon} />
+      <Image source={isDarkMode ? require("./assets/darkmode.png") : require("./assets/lightmode.png")} style={styles.modeIcon} />
     </TouchableOpacity>
   );
 };
 
-export default RogerApp;
+export default Menu;
