@@ -22,10 +22,10 @@ const initialBags = [
 ];
 
 const defaultBagImages = [
-  require("./assets/bag.png"),
-  require("./assets/bag.png"),
-  require("./assets/bag.png"),
-  require("./assets/bag.png"),
+  require("./assets/bag_brown.png"),
+  require("./assets/bag_black_white.jpg"),
+  require("./assets/bag_pink.jpg"),
+  require("./assets/bag_white.jpg"),
 ];
 
 function responsiveWidth(num) {
@@ -73,10 +73,15 @@ const Menu = () => {
   }, []);
 
   const configureBackgroundLocation = async () => {
-    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-      accuracy: Location.Accuracy.Highest,
-      distanceInterval: 1, // Minimum distance in meters
-    });
+    try {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 1, // Minimum distance in meters
+      });
+    } catch (error) {
+      console.error("Error configuring background location:", error);
+      // Handle error, display a message, or fallback gracefully
+    }
   };
 
   const getCurrentColorThemeBackground = () => {
@@ -257,7 +262,7 @@ const Menu = () => {
           </View>
         </View>
         <View style={styles.text}>
-          <Text style={[getCurrentColorThemeTextMain(), styles.titleSelect]}>select</Text>
+          <Text style={[getCurrentColorThemeTextMain(), styles.titleSelect]}>Select</Text>
           <Text style={[getCurrentColorThemeTextMain(), styles.titleBags]}>Bags</Text>
         </View>
         <SafeAreaView style={styles.scrollContainer}>
@@ -354,47 +359,67 @@ const Menu = () => {
               </TouchableOpacity>
             ))}
           </View>
-          <Button title="Add Bag" onPress={addNewBag} />
-          <Button title="Cancel" onPress={() => setIsBagModalVisible(false)} />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.AddCancelContainer}>
+              <TouchableOpacity style={styles.darkBackground} onPress={addNewBag}>
+                <Text style={styles.cancelButtonText}>ADD BAG</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.redBackground} onPress={() => setIsBagModalVisible(false)} >
+                <Text style={styles.cancelButtonText}>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
 
       {/* Add/Rename Item Modal */}
       <Modal animationType="slide" transparent={true} visible={isItemModalVisible} onRequestClose={() => setIsItemModalVisible(false)}>
-        <View style={styles.modalView}>
+        <View style={styles.modalView2}>
           <Text style={styles.modalText}>{selectedItem ? "Edit Item" : "Add New Item"}</Text>
           <TextInput style={styles.input} placeholder="Enter Item Name" value={newItemName} onChangeText={setNewItemName} />
-          <Button
-            title={selectedItem ? "Rename Item" : "Add Item"}
-            onPress={() => {
+          <View style={styles.buttonsContainer2}>
+          <View style={styles.RenameDeleteCancelContainer}>
+          <TouchableOpacity style={styles.darkBackground} onPress={() => {
               if (selectedItem) {
                 renameItem(selectedItem.id, newItemName);
               } else {
                 addItemToBag();
               }
-            }}
-          />
+            }}>
+                <Text style={styles.cancelButtonText}>{selectedItem ? "RENAME ITEM" : "ADD ITEM"}</Text>
+          </TouchableOpacity>
+          
           {selectedItem && selectedBag && (
             <>
-              <Button
-                title="Delete Item"
-                onPress={() => {
-                  deleteItem(selectedItem.id);
-                  setIsItemModalVisible(false);
-                }}
-              />
+              <TouchableOpacity style={styles.darkBackground} onPress={() => { deleteItem(selectedItem.id); setIsItemModalVisible(false);}}>
+                <Text style={styles.cancelButtonText}>DELETE ITEM</Text>
+              </TouchableOpacity>
             </>
           )}
-          <Button title="Cancel" onPress={() => setIsItemModalVisible(false)} />
+          </View>
+        </View>
+        <View style={styles.buttonsContainer2}>
+          <TouchableOpacity style={styles.redBackground} onPress={() => setIsItemModalVisible(false)}>
+            <Text style={styles.cancelButtonText}>CANCEL</Text>
+          </TouchableOpacity>
+        </View>
         </View>
       </Modal>
 
       {/* Remove Bag Modal */}
       <Modal animationType="slide" transparent={true} visible={isRemoveBagModalVisible} onRequestClose={() => setIsRemoveBagModalVisible(false)}>
-        <View style={styles.modalView}>
+        <View style={styles.modalView2}>
           <Text style={styles.modalText}>Are you sure you want to remove this bag and all its items?</Text>
-          <Button title="Remove Bag" onPress={removeBag} />
-          <Button title="Cancel" onPress={() => setIsRemoveBagModalVisible(false)} />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.RemoveCancelContainer}>
+              <TouchableOpacity style={styles.darkBackground} onPress={removeBag}>
+                <Text style={styles.cancelButtonText}>REMOVE BAG</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.redBackground} onPress={() => setIsRemoveBagModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Modal>
     </Animated.View>
