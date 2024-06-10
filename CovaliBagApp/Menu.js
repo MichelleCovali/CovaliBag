@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Modal, TextInput, Button, FlatList, Switch, Alert, Animated } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions, Modal, TextInput, FlatList, Switch, Alert, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FlipCard from "react-native-flip-card";
 import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from './css/style'; // Ensure this path is correct
 import './task'; // Ensure this path is correct
@@ -51,6 +49,7 @@ const Menu = () => {
   const [newItemName, setNewItemName] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [isRemoveBagModalVisible, setIsRemoveBagModalVisible] = useState(false);
+  const [isRenameBagModalVisible, setIsRenameBagModalVisible] = useState(false);
   const backgroundColor = useRef(new Animated.Value(isDarkMode ? 1 : 0)).current;
 
   useEffect(() => {
@@ -180,11 +179,56 @@ const Menu = () => {
   };
 
   const removeBag = async () => {
-    const updatedBags = bags.filter(bag => bag.id !== selectedBag.id);
-    setBags(updatedBags);
-    await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
-    setIsRemoveBagModalVisible(false);
-    setSelectedBag(null);
+    try {
+      if (!selectedBag) return;
+
+      console.log('Removing bag:', selectedBag);
+
+      // Update the state using a functional update to ensure the correct state is used
+      setBags((prevBags) => {
+        const updatedBags = prevBags.filter(bag => bag.id !== selectedBag.id);
+        console.log('Updated bags:', updatedBags);
+        return updatedBags;
+      });
+
+      // After the state is updated, we can proceed to update AsyncStorage
+      const updatedBags = bags.filter(bag => bag.id !== selectedBag.id);
+      await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
+
+      setIsRemoveBagModalVisible(false);
+      setSelectedBag(null);
+
+      console.log('Bag removed successfully');
+    } catch (error) {
+      console.error('Error removing bag:', error);
+    }
+  };
+
+  const renameBag = async () => {
+    try {
+      if (!selectedBag) return;
+
+      const updatedBags = bags.map((bag) => {
+        if (bag.id === selectedBag.id) {
+          return {
+            ...bag,
+            name: newBagName,
+          };
+        }
+        return bag;
+      });
+
+      setBags(updatedBags);
+      await AsyncStorage.setItem('bags', JSON.stringify(updatedBags));
+
+      setIsRenameBagModalVisible(false);
+      setNewBagName("");
+      setSelectedBag(null);
+
+      console.log('Bag renamed successfully');
+    } catch (error) {
+      console.error('Error renaming bag:', error);
+    }
   };
 
   const toggleItemOnOff = async (bagId, itemId) => {
@@ -272,15 +316,6 @@ const Menu = () => {
                 {/* Front of card */}
                 <View style={[getCurrentColorThemeBagBox(), styles.bagBox]}>
                   <Image source={bag.imageUrl} style={styles.bagImage} />
-                  <TouchableOpacity
-                    style={styles.warningIconRedDot}
-                    onPress={() => {
-                      setSelectedBag(bag);
-                      setIsRemoveBagModalVisible(true);
-                    }}
-                  >
-                    <Image source={require("./assets/warning-icon.png")} style={styles.warningIcon} />
-                  </TouchableOpacity>
                   <View style={styles.infoRow}>
                     <View style={styles.footer}>
                       <Text style={styles.limitedEdition}>limited edition</Text>
@@ -306,6 +341,7 @@ const Menu = () => {
                             setNewItemName(item.name);
                             setIsItemModalVisible(true);
                           }}
+                          style={styles.itemNameContainer}
                         >
                           <Text style={styles.itemName}>{item.name}</Text>
                           <View style={[styles.statusIndicator, { backgroundColor: item.status }]} />
@@ -330,6 +366,15 @@ const Menu = () => {
                       source={require("./assets/plusIconDark.png")} // Replace with the path to your add item icon
                       style={styles.addItemIcon}
                     />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.warningIconRedDot}
+                    onPress={() => {
+                      setSelectedBag(bag);
+                      setIsRenameBagModalVisible(true);
+                    }}
+                  >
+                    <Image source={require("./assets/option.png")} style={styles.warningIcon} />
                   </TouchableOpacity>
                 </View>
               </FlipCard>
@@ -378,31 +423,31 @@ const Menu = () => {
           <Text style={styles.modalText}>{selectedItem ? "Edit Item" : "Add New Item"}</Text>
           <TextInput style={styles.input} placeholder="Enter Item Name" value={newItemName} onChangeText={setNewItemName} />
           <View style={styles.buttonsContainer2}>
-          <View style={styles.RenameDeleteCancelContainer}>
-          <TouchableOpacity style={styles.darkBackground} onPress={() => {
-              if (selectedItem) {
-                renameItem(selectedItem.id, newItemName);
-              } else {
-                addItemToBag();
-              }
-            }}>
+            <View style={styles.RenameDeleteCancelContainer}>
+              <TouchableOpacity style={styles.darkBackground} onPress={() => {
+                  if (selectedItem) {
+                    renameItem(selectedItem.id, newItemName);
+                  } else {
+                    addItemToBag();
+                  }
+                }}>
                 <Text style={styles.cancelButtonText}>{selectedItem ? "RENAME ITEM" : "ADD ITEM"}</Text>
-          </TouchableOpacity>
-          
-          {selectedItem && selectedBag && (
-            <>
-              <TouchableOpacity style={styles.darkBackground} onPress={() => { deleteItem(selectedItem.id); setIsItemModalVisible(false);}}>
-                <Text style={styles.cancelButtonText}>DELETE ITEM</Text>
               </TouchableOpacity>
-            </>
-          )}
+
+              {selectedItem && selectedBag && (
+                <>
+                  <TouchableOpacity style={styles.darkBackground} onPress={() => { deleteItem(selectedItem.id); setIsItemModalVisible(false);}}>
+                    <Text style={styles.cancelButtonText}>DELETE ITEM</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
           </View>
-        </View>
-        <View style={styles.buttonsContainer2}>
-          <TouchableOpacity style={styles.redBackground} onPress={() => setIsItemModalVisible(false)}>
-            <Text style={styles.cancelButtonText}>CANCEL</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={styles.buttonsContainer2}>
+            <TouchableOpacity style={styles.redBackground} onPress={() => setIsItemModalVisible(false)}>
+              <Text style={styles.cancelButtonText}>CANCEL</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
 
@@ -416,6 +461,29 @@ const Menu = () => {
                 <Text style={styles.cancelButtonText}>REMOVE BAG</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.redBackground} onPress={() => setIsRemoveBagModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>CANCEL</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Rename Bag Modal */}
+      <Modal animationType="slide" transparent={true} visible={isRenameBagModalVisible} onRequestClose={() => setIsRenameBagModalVisible(false)}>
+        <View style={styles.modalView2}>
+          <Text style={styles.modalText}>Rename Bag</Text>
+          <TextInput style={styles.input} placeholder="Enter New Bag Name" value={newBagName} onChangeText={setNewBagName} />
+          <View style={styles.buttonsContainer}>
+            <View style={styles.AddCancelContainer}>
+              <TouchableOpacity style={styles.darkBackground} onPress={renameBag}>
+                <Text style={styles.cancelButtonText}>RENAME BAG</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.darkBackground} onPress={() => setIsRemoveBagModalVisible(true)}>
+                <Text style={styles.cancelButtonText}>REMOVE BAG</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.CancelContainer}>
+              <TouchableOpacity style={styles.redBackground} onPress={() => setIsRenameBagModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>CANCEL</Text>
               </TouchableOpacity>
             </View>

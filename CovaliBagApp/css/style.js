@@ -224,20 +224,17 @@ const styles = StyleSheet.create({
     margin:5,
   },
   defaultBagImage: {
-    
     width: 55, // set the desired width
     height: 55, // set the desired height
     margin: 2, // add margin if needed
     resizeMode: "contain",
     borderRadius: 10,
     borderWidth: 2,
-
   },
   selectedBagImage: {
     justifyContent:"space-evenly",
     borderColor: "blue",
     borderWidth: 2,
-   
   },
   buttonsContainer:{
     flex: 1,
@@ -274,11 +271,17 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: responsiveFontSize(16),
+    marginRight: responsiveWidth(10),
+  },
+  itemNameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   statusIndicator: {
     width: 12,
     height: 12,
     borderRadius: 6,
+    marginRight: responsiveWidth(10),
   },
   redBackground: {
     backgroundColor: 'red',
@@ -301,6 +304,14 @@ const styles = StyleSheet.create({
     justifyContent:"center",
     textAlign:"center",
     margin:5,
+    borderRadius:5,
+  },
+  CancelContainer: {
+    backgroundColor: 'red',
+    height:40,
+    justifyContent:"center",
+    textAlign:"center",
+    margin:3,
     borderRadius:5,
   },
 });
