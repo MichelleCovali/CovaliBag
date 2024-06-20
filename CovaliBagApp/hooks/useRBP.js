@@ -3,6 +3,7 @@ import * as Notifications from "expo-notifications";
 
 export const useRBP = (address, port, id, dispatcher) => {
   const [data, setData] = useState(false);
+  console.log(address);
   const ws = useMemo(
     () => new WebSocket(`ws://${address}:${port}`),
     [address, port]

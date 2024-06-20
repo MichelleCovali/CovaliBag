@@ -28,9 +28,9 @@ const BagCard = ({
     bagsDispatcher
   );
 
-  console.log("Bag", bag); 
+  console.log("Bag", bag);
 
-  console.log("Available", isAvailable); 
+  console.log("Available", isAvailable);
 
   const getCurrentColorThemeBagBox = () => {
     return isDarkMode ? styles.cardDark : styles.cardLight;
@@ -43,7 +43,7 @@ const BagCard = ({
 
     updateData(socket, item.id, { ...item, isOn: !item.isOn });
 
-    console.log("Item toggled"); 
+    console.log("Item toggled");
   };
 
   return (
@@ -97,7 +97,7 @@ const BagCard = ({
           disabled={!isAvailable}
         >
           <Image
-            source={require("../assets/plusIconDark.png")} 
+            source={require("../assets/plusIconDark.png")}
             style={styles.addItemIcon}
           />
         </TouchableOpacity>

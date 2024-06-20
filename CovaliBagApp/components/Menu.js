@@ -95,7 +95,7 @@ const Menu = () => {
     },
   ]);
 
-  console.log("Bags:", bags); 
+  console.log("Bags:", bags);
 
   const [newBagName, setNewBagName] = useState("");
   const [newItemName, setNewItemName] = useState("");
@@ -230,7 +230,7 @@ const Menu = () => {
       selectedBagImage,
     });
 
-    console.log("Adding new bag:", newBag); 
+    console.log("Adding new bag:", newBag);
 
     setIsBagModalVisible(false);
     setNewBagName("");
@@ -248,7 +248,7 @@ const Menu = () => {
       location: null,
     };
 
-    console.log("Adding new item:", newItem); 
+    console.log("Adding new item:", newItem);
 
     bagsDispatcher({ type: "ADD_ITEM", bagId: selectedBag.id, newItem });
 
@@ -263,7 +263,7 @@ const Menu = () => {
   const renameItem = async (itemId, name) => {
     if (!selectedBag) return;
 
-    console.log("Renaming item:", itemId, name); 
+    console.log("Renaming item:", itemId, name);
 
     bagsDispatcher({
       type: "RENAME_ITEM",
@@ -272,8 +272,8 @@ const Menu = () => {
       name,
     });
 
-    console.log("selectedBagSocket: " + selectedBagSocket);
-    updateData(selectedBagSocket, itemId, { ...item, name });
+    console.log("Update item `for socket`: " + selectedBagSocket);
+    updateData(selectedBagSocket, itemId, { ...item, name: name });
 
     setIsItemModalVisible(false);
     setNewItemName("");
@@ -283,7 +283,7 @@ const Menu = () => {
   const deleteItem = async (itemId) => {
     if (!selectedBag) return;
 
-    console.log("Deleting item:", itemId); 
+    console.log("Deleting item:", itemId);
 
     bagsDispatcher({ type: "DELETE_ITEM", bagId: selectedBag.id, itemId });
 
@@ -309,7 +309,7 @@ const Menu = () => {
   const renameBag = async () => {
     if (!selectedBag) return;
 
-    console.log("Renaming bag:", selectedBag.id, newBagName); 
+    console.log("Renaming bag:", selectedBag.id, newBagName);
 
     bagsDispatcher({
       type: "RENAME_BAG",
@@ -516,12 +516,12 @@ const Menu = () => {
           </Text>
           <View style={styles.buttonsContainer}>
             <View style={styles.RemoveCancelContainer}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.darkBackground}
                 onPress={removeBag}
               >
                 <Text style={styles.cancelButtonText}>REMOVE BAG</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <TouchableOpacity
                 style={styles.redBackground}
                 onPress={() => setIsRemoveBagModalVisible(false)}
@@ -555,12 +555,6 @@ const Menu = () => {
                 onPress={renameBag}
               >
                 <Text style={styles.cancelButtonText}>RENAME BAG</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.darkBackground}
-                onPress={() => setIsRemoveBagModalVisible(true)}
-              >
-                <Text style={styles.cancelButtonText}>REMOVE BAG</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.CancelContainer}>
