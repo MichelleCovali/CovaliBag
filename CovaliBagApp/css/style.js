@@ -159,8 +159,36 @@ const styles = StyleSheet.create({
   darkModeBackground: {
     backgroundColor: "#393939",
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   modalView: {
-    margin: 20,
+    flex:1,
+    width: width * 0.9,
+    maxHeight: height * 0.5,
+    margin:20,
+    marginTop:60,
+    backgroundColor: "#E4BF7C",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalView2: {
+    flex:1,
+    width: width * 0.9,
+    maxHeight: height * 0.40,
+    margin:20,
+    marginTop:60,
     backgroundColor: "#E4BF7C",
     borderRadius: 20,
     padding: 35,
@@ -189,23 +217,45 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(18),
   },
   defaultImagesContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginVertical: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    margin:5,
   },
   defaultBagImage: {
-    width: responsiveWidth(60),
-    height: responsiveHeight(60),
+    width: 55, // set the desired width
+    height: 55, // set the desired height
+    margin: 2, // add margin if needed
     resizeMode: "contain",
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: "transparent",
   },
   selectedBagImage: {
+    justifyContent:"space-evenly",
     borderColor: "blue",
     borderWidth: 2,
-    width: responsiveWidth(80),
-    height: responsiveHeight(80),
+  },
+  buttonsContainer:{
+    flex: 1,
+    justifyContent: 'center', // Center the content vertically
+    alignItems: 'center', // Center the content horizontally
+  },
+  AddCancelContainer: {
+    flexDirection: 'row', // Arrange children in a row
+    justifyContent: 'space-between', // Distribute space between buttons
+    width: '60%', // Adjust the width as needed
+  },
+  RemoveCancelContainer: {
+    flexDirection: 'row', // Arrange children in a row
+    justifyContent: 'space-between', // Distribute space between buttons,
+    width:"70%",
+  },
+  RenameDeleteCancelContainer: {
+    flexDirection: 'row', // Arrange children in a row
+    justifyContent: 'space-between', // Distribute space between buttons,
+    width:"100%",
+    margin:10,
   },
   addItemIcon: {
     width: responsiveWidth(30),
@@ -221,11 +271,48 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: responsiveFontSize(16),
+    marginRight: responsiveWidth(10),
+  },
+  itemNameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   statusIndicator: {
     width: 12,
     height: 12,
     borderRadius: 6,
+    marginRight: responsiveWidth(10),
+  },
+  redBackground: {
+    backgroundColor: 'red',
+    padding:5,
+    height:40,
+    justifyContent:"center",
+    textAlign:"center",
+    margin:5,
+    borderRadius:5,
+  },
+  cancelButtonText:{
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold', // Make text bold
+  },
+  darkBackground:{
+    backgroundColor: '#393939',
+    padding:5,
+    height:40,
+    justifyContent:"center",
+    textAlign:"center",
+    margin:5,
+    borderRadius:5,
+  },
+  CancelContainer: {
+    backgroundColor: 'red',
+    height:40,
+    justifyContent:"center",
+    textAlign:"center",
+    margin:3,
+    borderRadius:5,
   },
 });
 

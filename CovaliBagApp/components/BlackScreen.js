@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Image, Animated } from "react-native";
+import { useEffect, useRef } from "react";
+import { View, StyleSheet, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const BlackScreen = () => {
@@ -12,8 +12,8 @@ const BlackScreen = () => {
       duration: 3000,
       useNativeDriver: true,
     }).start(() => {
-      navigation.replace('RogerApp');
-      // navigation.replace('Menu');
+      // navigation.replace('RogerApp');
+      navigation.replace("Menu");
       // navigation.replace('LoadingAnimation');
       // navigation.replace('DarylApp');
       // navigation.replace('Menu');
@@ -23,7 +23,7 @@ const BlackScreen = () => {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require("./assets/Covali.png")}
+        source={require("../assets/Covali.png")}
         style={[styles.image, { opacity: fadeAnim }]}
         resizeMode="contain"
       />
