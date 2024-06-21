@@ -8,13 +8,20 @@ In today's fast-paced world, efficiency and convenience are key in product desig
 
 1. [Info](#info)
 2. [Installation and Running](#installation-and-running)
+
    1. [The App](#the-app)
    2. [The raspberry pi](#the-raspberry-pi)
    3. [Problems](#problems)
 
+3. [Contribution](#contribution)
+
 ## Info
 
 This project transfers NFC data throughout the raspberry Pi to the react native app with web server.
+
+The folder "CovaliBagApp" contains the build files for the app for this project. This code is written with the help of JavaScrip library(Framwork) react-native.
+
+The folder "server" contains raspberry pi server which runs is a hos for a web connection and at the same time stores the NFC information in the database.
 
 ## Installation and Running
 
@@ -70,3 +77,60 @@ Now you raspberry pi is working and if you want the app to work please reload th
 Ensure that raspberry pi is connected to the network
 
 Ensure that both raspberry Pi, your phone, and PC are connected to the same network.
+
+## Contribution
+
+Student:
+
+Mihael Druzeta (5367131) - Work on the Raspberry Pi and the app
+
+- Work on Flip cards
+- Controlled quality
+- Add custom icons
+- Help with setting app Raspberry Pi
+- Wrote documentation
+- Developed 3d model logo
+
+Mihaela Covali (5292891) - Work on the Raspberry Pi and the app
+
+- Develop app design
+- Develop NFC scanner
+- Attempts to connect speakers
+- Swiping logic
+- Wrote documentation
+
+Timofei Arefev (5300428) - Work on the Raspberry Pi and a bit on the app
+
+- Setting up Raspberry Pi
+- Develop NFC scanner
+- Develop a web server to establish connection between the app and Raspberry Pi
+- Help with documentation
+
+Daryl Genove (5264652) - Work on the app
+
+- Implement the app design
+- Develop a loading screen
+- Add light and dark mode
+- Add buttons
+- Library management
+- Help with documentation
+
+Peter Zlamala (5340012) - Work on Raspberry Pi
+
+- Setting up Raspberry Pi
+- Develop NFC scanner
+- Helped with documentation
+
+Erika Nicolau (5326745) - Work on Raspberry Pi and the app
+
+- Develop NFC scanner
+- Attempts to connect speakers
+- Implement the main page in the app
+- Wrote documentation
+
+Jia Men Lam (5290201) - Work on the app
+
+- Work on the app functionality
+- Implement the design
+- Add bag settings
+- Wrote documentation
